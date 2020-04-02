@@ -4,6 +4,7 @@ export const FormContainer = styled.form`
     position: relative;
     max-width: 100%;
     font-size: 1rem;
+    margin-top: 20px;
 `;
 
 export const FormField = styled.div`
@@ -52,14 +53,18 @@ export const FormInput = styled.input`
 export const FormError = styled.span`
     display: block;
     padding: 0.5em 0;
-    font-size: 12px;
+    font-size: 14px;
     color: #9f3a38;
 `;
 
 export const ImageContainer = styled.div`
     display: block;
-    width: 80px;
-    height: 80px;
+
+    img {
+        width: 100px;
+        height: 100px;
+        padding: 0 0 1em;
+    }
 `;
 
 export const Button = styled.button`
