@@ -15,6 +15,21 @@ export const setGames = games => ({
     payload: games
 });
 
+export const addGame = game => ({
+  type: GamesTypes.ADD_GAME,
+  payload: game
+});
+
+export const gameFetched = game => ({
+  type: GamesTypes.GAME_FETCHED,
+  payload: game
+});
+
+export const gameUpdated = game => ({
+  type: GamesTypes.GAME_UPDATED,
+  payload: game
+});
+
 export const saveGame = data => {
       return dispatch => {
         return fetch('/api/games', {
@@ -23,9 +38,24 @@ export const saveGame = data => {
             headers: {
               "Content-Type": "application/json"
             }
-          }).then(handleResponse);
+          }).then(handleResponse)
+            .then(data => dispatch(addGame(data.game)));
       }
     
+};
+
+export const updateGame = data => {
+  return dispatch => {
+    return fetch(`/api/games/${data._id}`, {
+        method: 'put',
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }).then(handleResponse)
+        .then(data => dispatch(gameUpdated(data.game)));
+  }
+
 };
 
 export const fetchGames = () => {
@@ -36,3 +66,10 @@ export const fetchGames = () => {
     }
 };
 
+export const fetchGame = (id) => {
+  return dispatch => {
+      fetch(`/api/games/${id}`)
+          .then(res => res.json())
+          .then(data => dispatch(gameFetched(data.game)))
+  }
+};

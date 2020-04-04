@@ -1,9 +1,5 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
-
-import { saveGame } from '../../redux/games/games.actions';
 
 import { 
     FormContainer, 
@@ -15,18 +11,31 @@ import {
     Button
 } from './new-game.styles';
 
-const NewGame = ({ saveGame }) => {
+const NewGame = ({ saveGame, game }) => {
 
-    const [newGame, setNewGame] = useState({title: '', cover: '', done: false});
+    const [newGame, setNewGame] = useState({
+        _id: game ? game._id : null,
+        title: game ? game.title : '', 
+        cover: game ? game.cover : '', 
+    });
+
+    useEffect(() => {
+        if(game === null || game === undefined) {
+            setNewGame({_id: null, title: '', cover: ''})
+        }
+        console.log('Data received', game);
+    }, [game])
+
     const [errors, setErrors] = useState({});
     // const [loading, setLoading] = useState(false);
 
-    const { title, cover, done } = newGame;
+    const { _id, title, cover } = newGame;
 
     const handleChange = e => {
         const { name, value } = e.target;
         if(!!errors[name]) {
             delete errors[name];
+            setNewGame({...newGame, [name]: value})
             setErrors({...errors})
         } else {
             setNewGame({...newGame, [name]: value})
@@ -34,7 +43,9 @@ const NewGame = ({ saveGame }) => {
     }
 
     const handleSubmit = e => {
+
         e.preventDefault();
+
         if(title === '') errors.title = 'Title cannot be empty';
         if(cover === '') errors.cover = 'Cover cannot be empty';
         setErrors({...errors});
@@ -43,56 +54,49 @@ const NewGame = ({ saveGame }) => {
 
         if(isValid) {
             // setLoading(true);
-            saveGame({ title, cover }).then(
-                () => {setNewGame({done: true})},
-                error => error.response.json().then(({errors}) => setErrors({...errors}))
-            );
+            saveGame({ _id, title, cover }).catch(
+                error => error.response.json().then(({ errors }) => setErrors({...errors}))
+            )
         }
     }
 
     return (
         <Fragment>
-            <h1>Add new game</h1>
             {
                 errors.global && <FormError>{errors.global}</FormError>
             }
-            {
-                done ? <Redirect to='/games' /> :
-                (<FormContainer onSubmit={handleSubmit}>
-                    <FormField className={classnames('', { error: !!errors.title })}>
-                        <FormLabel>Title</FormLabel>
-                        <FormInput name='title' 
-                            value={title} 
-                            type='text' 
-                            onChange={handleChange}
-                        />
-                        <FormError>{errors.title}</FormError>
-                    </FormField>
-                    <FormField className={classnames('', { error: !!errors.cover })}>
-                        <FormLabel>Cover Url</FormLabel>
-                        <FormInput name='cover' 
-                            value={cover} 
-                            type='text' 
-                            onChange={handleChange}
-                        />
-                        <FormError>{errors.cover}</FormError>
-                    </FormField>
-                    <ImageContainer>
-                        {
-                            cover !== '' && <img src={cover} alt='cover' />
-                        }
-                    </ImageContainer>
-                    <FormField>
-                        <Button>Save</Button>
-                    </FormField>
-                </FormContainer>)
-            }
+            <FormContainer onSubmit={handleSubmit}>
+                <FormField className={classnames('', { error: !!errors.title })}>
+                    <FormLabel>Title</FormLabel>
+                    <FormInput name='title' 
+                        value={title} 
+                        type='text' 
+                        onChange={handleChange}
+                    />
+                    <FormError>{errors.title}</FormError>
+                </FormField>
+                <FormField className={classnames('', { error: !!errors.cover })}>
+                    <FormLabel>Cover Url</FormLabel>
+                    <FormInput name='cover' 
+                        value={cover} 
+                        type='text' 
+                        onChange={handleChange}
+                    />
+                    <FormError>{errors.cover}</FormError>
+                </FormField>
+                <ImageContainer>
+                    {
+                        cover !== '' && <img src={cover} alt='cover' />
+                    }
+                </ImageContainer>
+                <FormField>
+                    <Button>Save</Button>
+                </FormField>
+            </FormContainer>
+            
         </Fragment>
     )
 };
 
-const mapStatetoProps = dispatch => ({
-    saveGame: data => dispatch(saveGame(data))
-})
 
-export default connect(null, mapStatetoProps)(NewGame);
+export default NewGame;

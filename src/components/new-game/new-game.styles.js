@@ -39,7 +39,10 @@ export const FormInput = styled.input`
     border-radius: .28571429rem;
     box-shadow: 0 0 0 0 transparent inset;
     transition: color .1s ease,border-color .1s ease;
-    width: 50%;
+    width: calc(100% - 2em);
+    @media screen and (min-width: 1200px) {
+        width: 50%;
+    }
 
     &:focus {
         color: rgba(0,0,0,.95);
@@ -82,7 +85,6 @@ export const Button = styled.button`
     text-shadow: none;
     font-weight: 700;
     line-height: 1em;
-    font-style: normal;
     text-align: center;
     text-decoration: none;
     border-radius: .28571429rem;

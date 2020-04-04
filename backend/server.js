@@ -42,6 +42,31 @@ mongodb.MongoClient.connect(dbUrl, {useUnifiedTopology: true}, (err, client) =>{
         }
     });
 
+    app.put('/api/games/:_id', (req, res) => {
+      const { errors, isValid } = validate(req.body);
+
+      if(isValid) {
+        const { title, cover } = req.body;
+        db.collection('games').findOneAndUpdate(
+          { _id: new mongodb.ObjectId(req.params._id)},
+          { $set: { title, cover } },
+          { returnOriginal: false },
+          (error, result) => {
+            if(error) { res.status(500).json({ errors: {global: error}}); return }
+            res.json({ game: result.value })
+          }
+        ) 
+      } else {
+        res.status(404).json({ errors });
+      }
+    });
+
+    app.get('/api/games/:_id', (req, res) => {
+      db.collection('games').findOne({ _id: new mongodb.ObjectId(req.params._id)}, (err, game) => {
+        res.json({ game })
+      })
+    });
+
     app.use((req, res) => {
         res.status(404).json({
           errors: {
