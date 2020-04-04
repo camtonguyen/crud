@@ -19,6 +19,6 @@ const GameList = ({ games }) => {
             }
         </ListContainer>
     )
-}
+};
 
 export default GameList;

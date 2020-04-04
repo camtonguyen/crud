@@ -28,7 +28,11 @@ const gamesReducer = (state = INITIAL_STATE, action) => {
                 ...state,
                 game: updateExistingGame(state.listGame, action.payload)
             }
-            
+        case GamesTypes.GAME_DELETED:
+            return {
+                ...state,
+                listGame: state.listGame.filter(item => item._id !== action.payload)
+            }
         default:
             return state
     }

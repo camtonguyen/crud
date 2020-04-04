@@ -8,7 +8,7 @@ const handleResponse = response => {
       error.response = response;
       throw error;
     }
-  }
+}
 
 export const setGames = games => ({
     type: GamesTypes.SET_GAMES,
@@ -28,6 +28,11 @@ export const gameFetched = game => ({
 export const gameUpdated = game => ({
   type: GamesTypes.GAME_UPDATED,
   payload: game
+});
+
+export const gameDeleted = gameId => ({
+  type: GamesTypes.GAME_DELETED,
+  payload: gameId
 });
 
 export const saveGame = data => {
@@ -54,6 +59,19 @@ export const updateGame = data => {
         }
       }).then(handleResponse)
         .then(data => dispatch(gameUpdated(data.game)));
+  }
+
+};
+
+export const deleteGame = id => {
+  return dispatch => {
+    return fetch(`/api/games/${id}`, {
+        method: 'delete',
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }).then(handleResponse)
+        .then(data => dispatch(gameDeleted(id)));
   }
 
 };

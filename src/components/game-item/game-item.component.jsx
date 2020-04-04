@@ -1,4 +1,6 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { deleteGame } from '../../redux/games/games.actions';
 
 import { 
     ItemContainer, 
@@ -11,7 +13,7 @@ import {
     RedButton 
 } from './game-item.styles';
 
-const GameItem = ({ game }) => (
+const GameItem = ({ game, deleteGame }) => (
     <ItemContainer>
         <ItemImage>
             <img src={game.cover} alt={game.title} />
@@ -21,11 +23,15 @@ const GameItem = ({ game }) => (
             <ItemExtraContent>
                 <GroupButton>
                     <GreenButton to={`/game/${game._id}`}>Edit</GreenButton>
-                    <RedButton to=''>Remove</RedButton>
+                    <RedButton to='#' onClick={() => deleteGame(game._id)}>Remove</RedButton>
                 </GroupButton>
             </ItemExtraContent>
         </ItemContent>
     </ItemContainer>
 );
 
-export default GameItem;
+const mapDispatchToProps = dispatch => ({
+    deleteGame: gameId => dispatch(deleteGame(gameId))
+})
+
+export default connect(null, mapDispatchToProps)(GameItem);
